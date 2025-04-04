@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login page</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+body {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+    margin-top: -35%;
+    background-color:var(--main-bg-color);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    position: sticky;
+    left: 0;
+    top: 0;
+}
+
+#header .logo {
+    color:var(--primary-color);
+    width: 120px;
+    margin-bottom: 30px;
+    border-radius: 100px;   
+}
+#navbar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#navbar li{
+    list-style: none;
+    padding: 0 20px;
+    position: relative;
+}
+#navbar li a{
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600px;
+    color: #1a1a1a;
+    transition: 0.3s ease;
+}
+#navbar li a:hover,
+#navbar li a.active{
+    color:var(--text-color);
+}
+#navbar li a.active::after,
+#navbar li a:hover::after{
+    content: "";
+    width: 30%;
+    height: 2px;
+    background: rgb(77, 138, 77);;
+    position: absolute;
+    bottom: -4px;
+    left: 20px;
+}
+
+ .login-container {
+    padding: 20px 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    height: 60%;
+    width: 28%;
+    margin:40% 20% 30%;
+    background: url(images/products/rabit.avif)no-repeat;
+    background-size: cover;
+    padding: 20px 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    height: 60%;
+    width: 28%;           
+        }
+        input, select, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: none;
+        }
+        button {
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #dcdcdc;
+            cursor: not-allowed;
+        }
+        #loginButton a{
+            color: white;
+            font-size: 1.8rem;
+            text-decoration: none;
+        }
+        a{
+           text-decoration: none;
+           color: rgb(17, 211, 224);
+        }
+        #close{
+            display: none;
+        }
+        #mobile{
+          display: none;
+        }
+    </style>
+</head>
+<body>
+    <section id="header">
+        <a href="#"><img src="images/logo2.jpg" alt="" class="logo"></a>
+        <div>
+            <ul id="navbar">
+                <li><a class="active" href="index.html">HOME</a></li>
+                <li><a href="shop.html">SHOP</a></li>
+                <li><a href="blog.html">BLOG</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+                <li><a href="signup.html"><i class="fa-solid fa-user-plus"></i>SIGNUP</a></li>
+                <li><a href="login1.html"><i class="fa-solid fa-right-to-bracket"></i>LOGIN</a></li>
+                
+                <li><a href="" id="close"><i class="fas fa-times"></i></a></li>
+                <li></li>
+            </ul>
+        </div>
+        <div id="mobile">
+            <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a>
+            <i id="bar" class="fas fa-outdent"></i>
+        </div>
+    </section>
+    <div class="login-container">
+        <h2>Login</h2>
+        <label for="role">Role:</label>
+        <select id="role">
+            <option value="admin">Admin</option>
+            <option value="seller">Seller</option>
+            <option value="customer1">Customer</option>
+        </select>
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+
+        <button id="loginButton" onclick="validateLogin()">Login</button>
+        <p>if you don't have account&nbsp;&nbsp;&nbsp;<a href="signup.html">signup</a>
+        <p id="message"></p>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script >
+  //var map = L.map('map').setView([1.9501, 30.0588], 12);
+  //L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+     // attribution: '© OpenStreetMap contributors'
+  //}).addTo(map);
+
+  // Dummy users (replace with real authentication later)
+  const users = [
+      { role: "admin", email: "admin@example.com", password: "admin123" },
+      { role: "seller", email: "seller@example.com", password: "seller123" },
+      { role: "customer1", email: "customer@example.com", password: "customer123" }
+  ];
+
+ // const allowedCities = ["Kigali", "Rusizi", "Ngoma", "Huye", "Musanze","Rubavu"];
+
+  // Get user's location and validate login based on location
+ // function getLocation() {
+    //  if (navigator.geolocation) {
+      //    navigator.geolocation.getCurrentPosition(checkLocation, showError);
+     // } else {
+       //   document.getElementById("message").innerHTML = "Geolocation is not supported by this browser.";
+      //}
+  //}
+
+  // Handle location response
+  //function checkLocation(position) {
+    //  var lat = position.coords.latitude;
+    //  var lon = position.coords.longitude;
+      //console.log("User Location:", lat, lon);
+
+      // Reverse geocode to get city name
+      //reverseGeocode(lat, lon, function(city) {
+        //  if (allowedCities.includes(city)) {
+        //      document.getElementById("loginButton").disabled = false;
+         //     alert(`Welcome! You are in an allowed location: ${city}`);
+         // } else {
+           //   document.getElementById("loginButton").disabled = true;
+           //   alert(`Access Denied! You are in ${city}, which is not an allowed location.`);
+         // }
+
+          // Update the map view and add a marker
+        //  map.setView([lat, lon], 12);
+         // L.marker([lat, lon]).addTo(map).bindPopup(`You are in ${city}`).openPopup();
+     // });
+  //}
+
+  // Reverse geocode to get city name
+  //function reverseGeocode(lat, lon, callback) {
+    //  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+     //     .then(response => response.json())
+       //   .then(data => {
+          //    let city = data.address.city || data.address.town || data.address.village || "Unknown Location";
+        //      console.log("Detected City:", city);
+         //     callback(city);
+       //   })
+       //   .catch(error => console.error("Error with reverse geocoding:", error));
+ // }
+
+  // Handle geolocation error
+ // function showError(error) {
+   //   switch (error.code) {
+    //      case error.PERMISSION_DENIED:
+      //        document.getElementById("message").innerHTML = "User denied location access.";
+      //        break;
+      //    case error.POSITION_UNAVAILABLE:
+       //       document.getElementById("message").innerHTML = "Location information is unavailable.";
+      //        break;
+        //  case error.TIMEOUT:
+        //      document.getElementById("message").innerHTML = "Request timed out.";
+        //      break;
+        //  default:
+        //      document.getElementById("message").innerHTML = "An unknown error occurred.";
+        //      break;
+     // }
+ // }
+
+  // Validate login credentials
+ function validateLogin() {
+      const role = document.getElementById("role").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      const user = users.find(user => user.role === role && user.email === email && user.password === password);
+
+      if (user) {
+          message.style.color = "green";
+          message.textContent = "Login successful!";
+          setTimeout(() => {
+              window.location.href = `${role}.html`; // Redirect to role-specific page
+          }, 1000);
+      } else {
+          message.style.color = "red";
+          message.textContent = "Invalid credentials!";
+      }
+  }
+
+  // Call getLocation() when the page loads
+  //getLocation();
+    </script>
+</body>
+</html>
